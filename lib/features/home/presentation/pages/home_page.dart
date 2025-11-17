@@ -6,6 +6,7 @@ import '../../../veiculo/presentation/pages/veiculo_list_page.dart';
 import '../../../abastecimento/presentation/pages/abastecimento_form_page.dart';
 import '../../../abastecimento/presentation/pages/abastecimento_list_page.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../graficos/presentation/pages/grafico_custo_por_carro_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -83,6 +84,20 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.bar_chart),
+              title: const Text('Gráfico de Custos'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const GraficoCustoPorCarroPage(),
+                  ),
+                );
+              },
+            ),
+
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -95,28 +110,38 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.speed, size: 120, color: AppTheme.primaryColor),
-            SizedBox(height: 20),
-            Text(
-              'Bem-vindo ao seu painel de controle!',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.secondaryColor,
+      body: TweenAnimationBuilder(
+        duration: const Duration(milliseconds: 500),
+        tween: Tween<double>(begin: 0, end: 1),
+        builder: (context, value, child) {
+          return Opacity(
+            opacity: value,
+            child: Transform.scale(scale: 0.9 + (0.1 * value), child: child),
+          );
+        },
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.speed, size: 120, color: AppTheme.primaryColor),
+              SizedBox(height: 20),
+              Text(
+                'Bem-vindo ao seu painel de controle!',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.secondaryColor,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Gerencie veículos e abastecimentos\ncom rapidez e eficiência.',
-              style: TextStyle(fontSize: 15, color: Colors.black87),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              SizedBox(height: 10),
+              Text(
+                'Gerencie veículos e abastecimentos\ncom rapidez e eficiência.',
+                style: TextStyle(fontSize: 15, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,7 @@ import '../../../veiculo/presentation/controllers/veiculo_controller.dart';
 import '../../../veiculo/domain/models/veiculo_model.dart';
 import 'abastecimento_form_page.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/navigation/app_navigator.dart';
 
 class AbastecimentoListPage extends StatelessWidget {
   const AbastecimentoListPage({super.key});
@@ -17,13 +18,8 @@ class AbastecimentoListPage extends StatelessWidget {
         "${data.year}";
   }
 
-  void _abrirFormulario(BuildContext context, [AbastecimentoModel? modelo]) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => AbastecimentoFormPage(abastecimento: modelo),
-      ),
-    );
+  void _abrirFormulario(BuildContext context, [AbastecimentoModel? ab]) {
+    AppNavigator.navigateTo(context, AbastecimentoFormPage(abastecimento: ab));
   }
 
   @override
@@ -34,7 +30,7 @@ class AbastecimentoListPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          "Histórico de Abastecimentos",
+          'Histórico de Abastecimentos',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -60,7 +56,7 @@ class AbastecimentoListPage extends StatelessWidget {
               if (lista.isEmpty) {
                 return const Center(
                   child: Text(
-                    "Nenhum abastecimento registrado.",
+                    'Nenhum abastecimento registrado.',
                     style: TextStyle(
                       fontSize: 16,
                       color: AppTheme.secondaryColor,
@@ -69,75 +65,86 @@ class AbastecimentoListPage extends StatelessWidget {
                 );
               }
 
-              return ListView.separated(
+              return ListView.builder(
                 padding: const EdgeInsets.all(12),
-                separatorBuilder: (_, __) => const SizedBox(height: 10),
                 itemCount: lista.length,
                 itemBuilder: (context, index) {
                   final a = lista[index];
                   final veiculo = mapaVeiculos[a.veiculoId];
 
                   final titulo = veiculo == null
-                      ? "Veículo removido"
-                      : "${veiculo.modelo} - ${veiculo.placa}";
+                      ? 'Veículo removido'
+                      : '${veiculo.modelo} - ${veiculo.placa}';
 
                   final infoPrincipal =
-                      "${_formatarData(a.data)} • "
-                      "${a.tipoCombustivel} • "
-                      "${a.quantidadeLitros.toStringAsFixed(2)} L • "
-                      "R\$ ${a.valorPago.toStringAsFixed(2)} • "
-                      "Autonomia: ${a.quilometragem} km";
+                      '${_formatarData(a.data)} • '
+                      '${a.tipoCombustivel} • '
+                      '${a.quantidadeLitros.toStringAsFixed(2)} L • '
+                      'R\$ ${a.valorPago.toStringAsFixed(2)} • '
+                      '${a.quilometragem} km';
 
-                  return Card(
-                    elevation: 2,
-                    shadowColor: Colors.black26,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 18,
-                      ),
-                      leading: const Icon(
-                        Icons.local_gas_station,
-                        size: 32,
-                        color: AppTheme.secondaryColor,
-                      ),
-                      title: Text(
-                        titulo,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 17,
+                  return TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0, end: 1),
+                    duration: Duration(milliseconds: 350 + (index * 70)),
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.scale(
+                          scale: 0.9 + (value * 0.1),
+                          child: child,
                         ),
+                      );
+                    },
+                    child: Card(
+                      elevation: 2,
+                      shadowColor: Colors.black26,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
                       ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(infoPrincipal),
-
-                          // EXIBE A OBSERVAÇÃO SE EXISTIR
-                          if (a.observacao != null &&
-                              a.observacao!.trim().isNotEmpty) ...[
-                            const SizedBox(height: 6),
-                            Text(
-                              "Observação: ${a.observacao}",
-                              style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black87,
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 18,
+                        ),
+                        leading: const Icon(
+                          Icons.local_gas_station,
+                          size: 32,
+                          color: AppTheme.secondaryColor,
+                        ),
+                        title: Text(
+                          titulo,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(infoPrincipal),
+                            if (a.observacao != null &&
+                                a.observacao!.trim().isNotEmpty)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 6),
+                                child: Text(
+                                  'Observação: ${a.observacao}',
+                                  style: const TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.black87,
+                                  ),
+                                ),
                               ),
-                            ),
                           ],
-                        ],
-                      ),
-                      onTap: () => _abrirFormulario(context, a),
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete,
-                          color: AppTheme.errorColor,
                         ),
-                        onPressed: () =>
-                            abastController.excluirAbastecimento(a.id!),
+                        onTap: () => _abrirFormulario(context, a),
+                        trailing: IconButton(
+                          icon: const Icon(
+                            Icons.delete,
+                            color: AppTheme.errorColor,
+                          ),
+                          onPressed: () =>
+                              abastController.excluirAbastecimento(a.id!),
+                        ),
                       ),
                     ),
                   );
@@ -148,8 +155,8 @@ class AbastecimentoListPage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
         onPressed: () => _abrirFormulario(context),
+        child: const Icon(Icons.add),
       ),
     );
   }

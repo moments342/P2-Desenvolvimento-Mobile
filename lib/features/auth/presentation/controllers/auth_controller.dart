@@ -7,7 +7,6 @@ class AuthController extends ChangeNotifier {
   final AuthRepository _repository;
 
   AuthController(this._repository) {
-    // monitora o usuário logado
     _repository.usuarioStream.listen((user) {
       if (user != null) {
         usuario = UsuarioModel.fromFirebase(user.uid, user.email ?? "");
@@ -22,7 +21,6 @@ class AuthController extends ChangeNotifier {
   bool carregando = false;
   String? erro;
 
-  // Login
   Future<void> login(String email, String senha) async {
     try {
       carregando = true;
@@ -38,7 +36,6 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  // Cadastro
   Future<void> cadastrar(String email, String senha) async {
     try {
       carregando = true;
@@ -54,7 +51,6 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  // Logout
   Future<void> logout() async {
     await _repository.logout();
   }

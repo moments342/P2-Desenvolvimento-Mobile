@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Cores oficiais da paleta B (Esportivo Automotivo)
   static const Color primaryColor = Color(0xFFD32F2F); // Vermelho Sport
   static const Color secondaryColor = Color(0xFF212121); // Preto grafite
   static const Color tertiaryColor = Color(0xFFFFC107); // Ambar (destaques)
@@ -28,7 +27,6 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
 
-      // Estilo da AppBar
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
@@ -41,7 +39,6 @@ class AppTheme {
         ),
       ),
 
-      // Botões elevados
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.primary,
@@ -54,14 +51,12 @@ class AppTheme {
         ),
       ),
 
-      // Botões flutuantes (FAB)
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: tertiaryColor,
         foregroundColor: Colors.black,
         elevation: 4,
       ),
 
-      // Campos de texto
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
@@ -73,10 +68,8 @@ class AppTheme {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
-      // Drawer estilizado
       drawerTheme: const DrawerThemeData(backgroundColor: Color(0xFFF3F3F3)),
 
-      // Icones padrão
       iconTheme: const IconThemeData(color: secondaryColor, size: 26),
 
       scaffoldBackgroundColor: surfaceColor,

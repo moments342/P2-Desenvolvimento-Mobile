@@ -194,7 +194,6 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Veículo
                   DropdownButtonFormField<String>(
                     value: veiculoSelecionadoId,
                     items: veiculos
@@ -210,7 +209,6 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Quantidade de litros
                   TextFormField(
                     controller: quantidadeCtrl,
                     keyboardType: const TextInputType.numberWithOptions(
@@ -238,7 +236,6 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Tipo combustível
                   DropdownButtonFormField<String>(
                     value: tipoCombustivel,
                     items: combustiveis
@@ -252,7 +249,6 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Consumo manual
                   TextFormField(
                     controller: consumoCtrl,
                     keyboardType: const TextInputType.numberWithOptions(
@@ -266,7 +262,6 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Quilometragem calculada
                   TextFormField(
                     controller: quilometragemCalculadaCtrl,
                     readOnly: true,
@@ -276,7 +271,6 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
                   ),
                   const SizedBox(height: 14),
 
-                  // Observação
                   TextFormField(
                     controller: observacaoCtrl,
                     maxLines: 2,

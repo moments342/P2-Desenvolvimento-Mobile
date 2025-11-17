@@ -84,7 +84,6 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
             children: [
               const SizedBox(height: 12),
 
-              // Modelo
               TextFormField(
                 controller: modeloCtrl,
                 decoration: const InputDecoration(labelText: 'Modelo'),
@@ -102,7 +101,6 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
               ),
               const SizedBox(height: 14),
 
-              // Placa
               TextFormField(
                 controller: placaCtrl,
                 decoration: const InputDecoration(labelText: 'Placa'),
@@ -111,7 +109,6 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
               ),
               const SizedBox(height: 14),
 
-              // Ano
               TextFormField(
                 controller: anoCtrl,
                 keyboardType: TextInputType.number,
@@ -121,7 +118,6 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
               ),
               const SizedBox(height: 14),
 
-              // Combustível
               DropdownButtonFormField<String>(
                 value: tipoCombustivel,
                 items: combustiveis
