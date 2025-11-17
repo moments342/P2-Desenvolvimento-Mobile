@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../veiculo/presentation/pages/veiculo_list_page.dart';
+import '../../../abastecimento/presentation/pages/abastecimento_form_page.dart';
+import '../../../abastecimento/presentation/pages/abastecimento_list_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -20,9 +22,17 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _mostrarEmConstrucao(BuildContext context, String titulo) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$titulo será implementado na próxima etapa.')),
+  void _registrarAbastecimento(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AbastecimentoFormPage()),
+    );
+  }
+
+  void _historicoAbastecimentos(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const AbastecimentoListPage()),
     );
   }
 
@@ -49,7 +59,7 @@ class HomePage extends StatelessWidget {
               title: const Text('Registrar Abastecimento'),
               onTap: () {
                 Navigator.pop(context);
-                _mostrarEmConstrucao(context, 'Registrar Abastecimento');
+                _registrarAbastecimento(context);
               },
             ),
             ListTile(
@@ -57,7 +67,7 @@ class HomePage extends StatelessWidget {
               title: const Text('Histórico de Abastecimentos'),
               onTap: () {
                 Navigator.pop(context);
-                _mostrarEmConstrucao(context, 'Histórico de Abastecimentos');
+                _historicoAbastecimentos(context);
               },
             ),
             const Divider(),

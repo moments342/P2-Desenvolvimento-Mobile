@@ -12,6 +12,9 @@ import '../features/home/presentation/pages/home_page.dart';
 import '../features/veiculo/data/repositories/veiculo_repository.dart';
 import '../features/veiculo/presentation/controllers/veiculo_controller.dart';
 
+import '../features/abastecimento/data/repositories/abastecimento_repository.dart';
+import '../features/abastecimento/presentation/controllers/abastecimento_controller.dart';
+
 class AppWidget extends StatelessWidget {
   const AppWidget({super.key});
 
@@ -25,8 +28,17 @@ class AppWidget extends StatelessWidget {
             VeiculoRepository(),
             context.read<AuthController>(),
           ),
-          update: (context, auth, veiculoControllerAnterior) {
+          update: (context, auth, previous) {
             return VeiculoController(VeiculoRepository(), auth);
+          },
+        ),
+        ChangeNotifierProxyProvider<AuthController, AbastecimentoController>(
+          create: (context) => AbastecimentoController(
+            AbastecimentoRepository(),
+            context.read<AuthController>(),
+          ),
+          update: (context, auth, previous) {
+            return AbastecimentoController(AbastecimentoRepository(), auth);
           },
         ),
       ],
