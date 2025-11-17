@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "984860647038",
+    "project_id": "controle-abastecimento-18666",
+    "storage_bucket": "controle-abastecimento-18666.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984860647038:android:dd71f710a3a0892353022f",
+        "android_client_info": {
+          "package_name": "com.example.gerenciamento_veiculos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNZNomHSvx9j0qjOSUUtPZ3rMuP-dWJ78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:984860647038:android:4638cd87e031ade153022f",
+        "android_client_info": {
+          "package_name": "com.moments.gerenciamentoVeiculos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNZNomHSvx9j0qjOSUUtPZ3rMuP-dWJ78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
