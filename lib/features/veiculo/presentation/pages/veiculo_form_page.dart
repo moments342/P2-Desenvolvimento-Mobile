@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../domain/models/veiculo_model.dart';
 import '../controllers/veiculo_controller.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class VeiculoFormPage extends StatefulWidget {
   final VeiculoModel? veiculo;
@@ -20,6 +21,7 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
   late TextEditingController marcaCtrl;
   late TextEditingController placaCtrl;
   late TextEditingController anoCtrl;
+
   String tipoCombustivel = 'Gasolina';
 
   final List<String> combustiveis = ['Gasolina', 'Etanol', 'Diesel', 'Flex'];
@@ -48,19 +50,18 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
   Future<void> _salvar() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final ano = int.tryParse(anoCtrl.text.trim()) ?? 0;
+    final controller = context.read<VeiculoController>();
 
-    final novoVeiculo = VeiculoModel(
+    final novo = VeiculoModel(
       id: widget.veiculo?.id,
       modelo: modeloCtrl.text.trim(),
       marca: marcaCtrl.text.trim(),
       placa: placaCtrl.text.trim(),
-      ano: ano,
+      ano: int.tryParse(anoCtrl.text.trim()) ?? 0,
       tipoCombustivel: tipoCombustivel,
     );
 
-    final controller = context.read<VeiculoController>();
-    await controller.salvarVeiculo(novoVeiculo);
+    await controller.salvarVeiculo(novo);
 
     if (!mounted) return;
     Navigator.pop(context);
@@ -74,33 +75,43 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
       appBar: AppBar(
         title: Text(widget.veiculo == null ? 'Novo Veículo' : 'Editar Veículo'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(22),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const SizedBox(height: 12),
+
+              // Modelo
               TextFormField(
                 controller: modeloCtrl,
                 decoration: const InputDecoration(labelText: 'Modelo'),
                 validator: (v) =>
                     v == null || v.isEmpty ? 'Informe o modelo' : null,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
+
+              // Marca
               TextFormField(
                 controller: marcaCtrl,
                 decoration: const InputDecoration(labelText: 'Marca'),
                 validator: (v) =>
                     v == null || v.isEmpty ? 'Informe a marca' : null,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
+
+              // Placa
               TextFormField(
                 controller: placaCtrl,
                 decoration: const InputDecoration(labelText: 'Placa'),
                 validator: (v) =>
                     v == null || v.isEmpty ? 'Informe a placa' : null,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
+
+              // Ano
               TextFormField(
                 controller: anoCtrl,
                 keyboardType: TextInputType.number,
@@ -108,35 +119,42 @@ class _VeiculoFormPageState extends State<VeiculoFormPage> {
                 validator: (v) =>
                     v == null || v.isEmpty ? 'Informe o ano' : null,
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
+
+              // Combustível
               DropdownButtonFormField<String>(
                 value: tipoCombustivel,
                 items: combustiveis
                     .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                     .toList(),
-                onChanged: (valor) {
-                  if (valor != null) {
-                    setState(() {
-                      tipoCombustivel = valor;
-                    });
-                  }
+                onChanged: (v) {
+                  if (v != null) setState(() => tipoCombustivel = v);
                 },
                 decoration: const InputDecoration(
                   labelText: 'Tipo de combustível',
                 ),
               ),
+
               const SizedBox(height: 20),
+
               if (controller.erro != null)
                 Text(
                   controller.erro!,
-                  style: const TextStyle(color: Colors.red),
+                  style: const TextStyle(color: AppTheme.errorColor),
                 ),
-              const SizedBox(height: 10),
+
+              const SizedBox(height: 12),
+
               controller.carregando
-                  ? const CircularProgressIndicator()
+                  ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
                       onPressed: _salvar,
-                      child: const Text('Salvar'),
+                      child: Text(
+                        widget.veiculo == null
+                            ? 'Cadastrar'
+                            : 'Salvar alterações',
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ),
             ],
           ),

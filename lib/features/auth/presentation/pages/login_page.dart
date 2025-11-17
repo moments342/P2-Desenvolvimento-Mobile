@@ -3,67 +3,94 @@ import 'package:provider/provider.dart';
 
 import '../controllers/auth_controller.dart';
 import 'cadastro_page.dart';
+import '../../../../core/theme/app_theme.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final emailCtrl = TextEditingController();
-  final senhaCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthController>();
 
+    final emailCtrl = TextEditingController();
+    final senhaCtrl = TextEditingController();
+
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            TextField(
-              controller: emailCtrl,
-              decoration: const InputDecoration(labelText: "E-mail"),
-            ),
-            const SizedBox(height: 16),
+      backgroundColor: AppTheme.surfaceColor,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Icon(
+                Icons.local_gas_station,
+                size: 90,
+                color: AppTheme.primaryColor,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Entrar',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.secondaryColor,
+                ),
+              ),
+              const SizedBox(height: 20),
 
-            TextField(
-              controller: senhaCtrl,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: "Senha"),
-            ),
-            const SizedBox(height: 20),
+              // E-mail
+              TextField(
+                controller: emailCtrl,
+                decoration: const InputDecoration(labelText: 'E-mail'),
+              ),
+              const SizedBox(height: 16),
 
-            if (auth.erro != null)
-              Text(auth.erro!, style: const TextStyle(color: Colors.red)),
+              // Senha
+              TextField(
+                controller: senhaCtrl,
+                decoration: const InputDecoration(labelText: 'Senha'),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
 
-            const SizedBox(height: 16),
+              if (auth.erro != null)
+                Text(
+                  auth.erro!,
+                  style: const TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
 
-            auth.carregando
-                ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: () {
-                      auth.login(emailCtrl.text, senhaCtrl.text);
-                    },
-                    child: const Text("Entrar"),
+              const SizedBox(height: 10),
+
+              auth.carregando
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: () {
+                        auth.login(emailCtrl.text, senhaCtrl.text);
+                      },
+                      child: const Text('Entrar'),
+                    ),
+
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CadastroPage()),
+                  );
+                },
+                child: const Text(
+                  'Criar conta',
+                  style: TextStyle(
+                    color: AppTheme.primaryColor,
+                    fontWeight: FontWeight.bold,
                   ),
-
-            const SizedBox(height: 20),
-
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CadastroPage()),
-                );
-              },
-              child: const Text("Criar conta"),
-            ),
-          ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

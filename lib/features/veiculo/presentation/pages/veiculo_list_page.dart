@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../domain/models/veiculo_model.dart';
 import '../controllers/veiculo_controller.dart';
 import 'veiculo_form_page.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class VeiculoListPage extends StatelessWidget {
   const VeiculoListPage({super.key});
@@ -20,7 +21,12 @@ class VeiculoListPage extends StatelessWidget {
     final controller = context.watch<VeiculoController>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Meus Veículos')),
+      appBar: AppBar(
+        title: const Text(
+          'Meus Veículos',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: StreamBuilder<List<VeiculoModel>>(
         stream: controller.veiculosStream,
         builder: (context, snapshot) {
@@ -31,25 +37,54 @@ class VeiculoListPage extends StatelessWidget {
           final veiculos = snapshot.data ?? [];
 
           if (veiculos.isEmpty) {
-            return const Center(child: Text('Nenhum veículo cadastrado.'));
+            return const Center(
+              child: Text(
+                'Nenhum veículo cadastrado.',
+                style: TextStyle(fontSize: 16, color: AppTheme.secondaryColor),
+              ),
+            );
           }
 
           return ListView.separated(
+            padding: const EdgeInsets.all(12),
             itemCount: veiculos.length,
             separatorBuilder: (_, __) => const Divider(height: 0),
             itemBuilder: (context, index) {
               final v = veiculos[index];
-              return ListTile(
-                title: Text('${v.modelo} (${v.ano})'),
-                subtitle: Text(
-                  '${v.marca} • ${v.placa} • ${v.tipoCombustivel}',
+              return Card(
+                elevation: 2,
+                shadowColor: Colors.black26,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                onTap: () => _abrirFormulario(context, v),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    await controller.excluirVeiculo(v.id!);
-                  },
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 16,
+                  ),
+                  leading: const Icon(
+                    Icons.directions_car,
+                    size: 32,
+                    color: AppTheme.secondaryColor,
+                  ),
+                  title: Text(
+                    '${v.modelo} (${v.ano})',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    ),
+                  ),
+                  subtitle: Text(
+                    '${v.marca} • ${v.placa} • ${v.tipoCombustivel}',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  onTap: () => _abrirFormulario(context, v),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete, color: AppTheme.errorColor),
+                    onPressed: () async {
+                      await controller.excluirVeiculo(v.id!);
+                    },
+                  ),
                 ),
               );
             },

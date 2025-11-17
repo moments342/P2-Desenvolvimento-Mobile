@@ -5,6 +5,7 @@ import '../../domain/models/abastecimento_model.dart';
 import '../controllers/abastecimento_controller.dart';
 import '../../../veiculo/presentation/controllers/veiculo_controller.dart';
 import '../../../veiculo/domain/models/veiculo_model.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class AbastecimentoFormPage extends StatefulWidget {
   final AbastecimentoModel? abastecimento;
@@ -33,6 +34,7 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
   @override
   void initState() {
     super.initState();
+
     final ab = widget.abastecimento;
 
     dataSelecionada = ab?.data ?? DateTime.now();
@@ -40,31 +42,27 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
     quantidadeCtrl = TextEditingController(
       text: ab != null ? ab.quantidadeLitros.toString() : '',
     );
-
     valorCtrl = TextEditingController(
       text: ab != null ? ab.valorPago.toString() : '',
     );
-
     consumoCtrl = TextEditingController(
       text: ab != null ? ab.consumo.toString() : '',
     );
-
-    observacaoCtrl = TextEditingController(text: ab?.observacao ?? '');
-
+    observacaoCtrl = TextEditingController(
+      text: ab != null ? ab.observacao ?? '' : '',
+    );
     tipoCombustivel = ab?.tipoCombustivel ?? 'Gasolina';
-
     veiculoSelecionadoId = ab?.veiculoId;
 
-    // Cálculo da quilometragem inicial
     final litros = double.tryParse(quantidadeCtrl.text) ?? 0;
     final consumo = double.tryParse(consumoCtrl.text) ?? 0;
+
     final kmCalc = litros * consumo;
 
     quilometragemCalculadaCtrl = TextEditingController(
       text: kmCalc.toStringAsFixed(2),
     );
 
-    // Listeners para recalcular automaticamente
     quantidadeCtrl.addListener(_recalcularQuilometragem);
     consumoCtrl.addListener(_recalcularQuilometragem);
   }
@@ -79,7 +77,6 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
     super.dispose();
   }
 
-  // Recalcula quilometragem automaticamente
   void _recalcularQuilometragem() {
     final litros = double.tryParse(quantidadeCtrl.text) ?? 0;
     final consumo = double.tryParse(consumoCtrl.text) ?? 0;
@@ -90,10 +87,9 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
   }
 
   String _formatarData(DateTime data) {
-    final d = data.day.toString().padLeft(2, '0');
-    final m = data.month.toString().padLeft(2, '0');
-    final y = data.year.toString();
-    return '$d/$m/$y';
+    return "${data.day.toString().padLeft(2, '0')}/"
+        "${data.month.toString().padLeft(2, '0')}/"
+        "${data.year}";
   }
 
   Future<void> _selecionarData() async {
@@ -105,34 +101,31 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
     );
 
     if (novaData != null) {
-      setState(() {
-        dataSelecionada = novaData;
-      });
+      setState(() => dataSelecionada = novaData);
     }
   }
 
   Future<void> _salvar(AbastecimentoController controller) async {
     if (!_formKey.currentState!.validate()) return;
-    if (dataSelecionada == null) return;
+
     if (veiculoSelecionadoId == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Selecione um veículo.')));
+      ).showSnackBar(const SnackBar(content: Text("Selecione um veículo")));
       return;
     }
 
     final litros = double.tryParse(quantidadeCtrl.text.trim()) ?? 0.0;
     final valor = double.tryParse(valorCtrl.text.trim()) ?? 0.0;
     final consumo = double.tryParse(consumoCtrl.text.trim()) ?? 0.0;
-
-    final kmCalculada = double.tryParse(quilometragemCalculadaCtrl.text) ?? 0.0;
+    final km = double.tryParse(quilometragemCalculadaCtrl.text) ?? 0.0;
 
     final novo = AbastecimentoModel(
       id: widget.abastecimento?.id,
       data: dataSelecionada!,
       quantidadeLitros: litros,
       valorPago: valor,
-      quilometragem: kmCalculada.toInt(),
+      quilometragem: km.toInt(),
       tipoCombustivel: tipoCombustivel,
       veiculoId: veiculoSelecionadoId!,
       consumo: consumo,
@@ -149,181 +142,173 @@ class _AbastecimentoFormPageState extends State<AbastecimentoFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final veiculoController = context.watch<VeiculoController>();
+    final veiculosController = context.watch<VeiculoController>();
     final abastController = context.watch<AbastecimentoController>();
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.abastecimento == null
-              ? 'Registrar Abastecimento'
-              : 'Editar Abastecimento',
+              ? "Registrar Abastecimento"
+              : "Editar Abastecimento",
         ),
       ),
       body: StreamBuilder<List<VeiculoModel>>(
-        stream: veiculoController.veiculosStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+        stream: veiculosController.veiculosStream,
+        builder: (context, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final veiculos = snapshot.data ?? [];
+          final veiculos = snap.data ?? [];
 
           if (veiculos.isEmpty) {
             return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(
-                  'Nenhum veículo cadastrado.\n'
-                  'Cadastre um veículo antes de registrar abastecimentos.',
-                  textAlign: TextAlign.center,
-                ),
+              child: Text(
+                "Nenhum veículo cadastrado.\nCadastre um veículo primeiro.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
               ),
             );
           }
 
           veiculoSelecionadoId ??= veiculos.first.id;
 
-          return Padding(
-            padding: const EdgeInsets.all(16),
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(22),
             child: Form(
               key: _formKey,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    // Data
-                    TextFormField(
-                      readOnly: true,
-                      onTap: _selecionarData,
-                      decoration: const InputDecoration(
-                        labelText: 'Data',
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      controller: TextEditingController(
-                        text: _formatarData(dataSelecionada ?? DateTime.now()),
-                      ),
+              child: Column(
+                children: [
+                  // DATA
+                  TextFormField(
+                    readOnly: true,
+                    onTap: _selecionarData,
+                    decoration: const InputDecoration(
+                      labelText: "Data",
+                      suffixIcon: Icon(Icons.calendar_month),
                     ),
-                    const SizedBox(height: 12),
-
-                    // Veículo
-                    DropdownButtonFormField<String>(
-                      value: veiculoSelecionadoId,
-                      items: veiculos
-                          .map(
-                            (v) => DropdownMenuItem(
-                              value: v.id,
-                              child: Text('${v.modelo} - ${v.placa}'),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (valor) {
-                        setState(() {
-                          veiculoSelecionadoId = valor;
-                        });
-                      },
-                      decoration: const InputDecoration(labelText: 'Veículo'),
+                    controller: TextEditingController(
+                      text: _formatarData(dataSelecionada!),
                     ),
-                    const SizedBox(height: 12),
+                  ),
+                  const SizedBox(height: 14),
 
-                    // Quantidade de litros
-                    TextFormField(
-                      controller: quantidadeCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Quantidade de litros',
-                      ),
-                      validator: (v) => v == null || v.isEmpty
-                          ? 'Informe a quantidade'
-                          : null,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Valor pago
-                    TextFormField(
-                      controller: valorCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Valor pago',
-                      ),
-                      validator: (v) =>
-                          v == null || v.isEmpty ? 'Informe o valor' : null,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Tipo de combustível
-                    DropdownButtonFormField<String>(
-                      value: tipoCombustivel,
-                      items: combustiveis
-                          .map(
-                            (c) => DropdownMenuItem(value: c, child: Text(c)),
-                          )
-                          .toList(),
-                      onChanged: (valor) {
-                        if (valor != null) {
-                          setState(() {
-                            tipoCombustivel = valor;
-                          });
-                        }
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Tipo de combustível',
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Consumo (manual)
-                    TextFormField(
-                      controller: consumoCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: const InputDecoration(
-                        labelText: 'Consumo (km/L)',
-                      ),
-                      validator: (v) =>
-                          v == null || v.isEmpty ? 'Informe o consumo' : null,
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Quilometragem calculada
-                    TextFormField(
-                      controller: quilometragemCalculadaCtrl,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Quilometragem (calculada)',
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-
-                    // Observação
-                    TextFormField(
-                      controller: observacaoCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Observação (opcional)',
-                      ),
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 16),
-
-                    if (abastController.erro != null)
-                      Text(
-                        abastController.erro!,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    const SizedBox(height: 10),
-
-                    abastController.carregando
-                        ? const CircularProgressIndicator()
-                        : ElevatedButton(
-                            onPressed: () => _salvar(abastController),
-                            child: const Text('Salvar'),
+                  // Veículo
+                  DropdownButtonFormField<String>(
+                    value: veiculoSelecionadoId,
+                    items: veiculos
+                        .map(
+                          (v) => DropdownMenuItem(
+                            value: v.id,
+                            child: Text("${v.modelo} - ${v.placa}"),
                           ),
-                  ],
-                ),
+                        )
+                        .toList(),
+                    onChanged: (v) => setState(() => veiculoSelecionadoId = v),
+                    decoration: const InputDecoration(labelText: "Veículo"),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Quantidade de litros
+                  TextFormField(
+                    controller: quantidadeCtrl,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: "Quantidade (litros)",
+                    ),
+                    validator: (v) =>
+                        v == null || v.isEmpty ? "Informe os litros" : null,
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Valor
+                  TextFormField(
+                    controller: valorCtrl,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: "Valor pago (R\$)",
+                    ),
+                    validator: (v) =>
+                        v == null || v.isEmpty ? "Informe o valor" : null,
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Tipo combustível
+                  DropdownButtonFormField<String>(
+                    value: tipoCombustivel,
+                    items: combustiveis
+                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                        .toList(),
+                    onChanged: (v) =>
+                        setState(() => tipoCombustivel = v ?? tipoCombustivel),
+                    decoration: const InputDecoration(
+                      labelText: "Tipo de combustível",
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Consumo manual
+                  TextFormField(
+                    controller: consumoCtrl,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: "Consumo (km/L)",
+                    ),
+                    validator: (v) =>
+                        v == null || v.isEmpty ? "Informe o consumo" : null,
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Quilometragem calculada
+                  TextFormField(
+                    controller: quilometragemCalculadaCtrl,
+                    readOnly: true,
+                    decoration: const InputDecoration(
+                      labelText: "Quilometragem (calculada)",
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Observação
+                  TextFormField(
+                    controller: observacaoCtrl,
+                    maxLines: 2,
+                    decoration: const InputDecoration(
+                      labelText: "Observação (opcional)",
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+
+                  if (abastController.erro != null)
+                    Text(
+                      abastController.erro!,
+                      style: const TextStyle(
+                        color: AppTheme.errorColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                  const SizedBox(height: 12),
+
+                  abastController.carregando
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: () => _salvar(abastController),
+                          child: Text(
+                            widget.abastecimento == null
+                                ? "Registrar"
+                                : "Salvar alterações",
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                ],
               ),
             ),
           );

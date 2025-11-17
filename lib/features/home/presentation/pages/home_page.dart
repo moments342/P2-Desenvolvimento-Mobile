@@ -5,6 +5,7 @@ import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../veiculo/presentation/pages/veiculo_list_page.dart';
 import '../../../abastecimento/presentation/pages/abastecimento_form_page.dart';
 import '../../../abastecimento/presentation/pages/abastecimento_list_page.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,43 +16,45 @@ class HomePage extends StatelessWidget {
     Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  void _abrirVeiculos(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const VeiculoListPage()),
-    );
-  }
-
-  void _registrarAbastecimento(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AbastecimentoFormPage()),
-    );
-  }
-
-  void _historicoAbastecimentos(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const AbastecimentoListPage()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Controle de Abastecimento')),
+      appBar: AppBar(
+        title: const Text(
+          'Controle de Abastecimento',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       drawer: Drawer(
         child: ListView(
           children: [
-            const DrawerHeader(
-              child: Center(child: Icon(Icons.directions_car, size: 64)),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: AppTheme.primaryColor),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.local_gas_station, size: 80, color: Colors.white),
+                  SizedBox(height: 10),
+                  Text(
+                    'Menu Principal',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.directions_car),
               title: const Text('Meus Veículos'),
               onTap: () {
                 Navigator.pop(context);
-                _abrirVeiculos(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const VeiculoListPage()),
+                );
               },
             ),
             ListTile(
@@ -59,7 +62,12 @@ class HomePage extends StatelessWidget {
               title: const Text('Registrar Abastecimento'),
               onTap: () {
                 Navigator.pop(context);
-                _registrarAbastecimento(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AbastecimentoFormPage(),
+                  ),
+                );
               },
             ),
             ListTile(
@@ -67,7 +75,12 @@ class HomePage extends StatelessWidget {
               title: const Text('Histórico de Abastecimentos'),
               onTap: () {
                 Navigator.pop(context);
-                _historicoAbastecimentos(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AbastecimentoListPage(),
+                  ),
+                );
               },
             ),
             const Divider(),
@@ -86,10 +99,21 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(Icons.directions_car_filled, size: 96),
-            SizedBox(height: 16),
+            Icon(Icons.speed, size: 120, color: AppTheme.primaryColor),
+            SizedBox(height: 20),
             Text(
-              'Bem-vindo ao controle de veículos e abastecimentos!',
+              'Bem-vindo ao seu painel de controle!',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.secondaryColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Gerencie veículos e abastecimentos\ncom rapidez e eficiência.',
+              style: TextStyle(fontSize: 15, color: Colors.black87),
               textAlign: TextAlign.center,
             ),
           ],
