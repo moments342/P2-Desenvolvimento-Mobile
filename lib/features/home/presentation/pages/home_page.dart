@@ -14,7 +14,6 @@ class HomePage extends StatelessWidget {
   void _logout(BuildContext context) async {
     final auth = context.read<AuthController>();
     await auth.logout();
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   @override
